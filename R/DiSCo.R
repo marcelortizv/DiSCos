@@ -49,6 +49,16 @@ utils::globalVariables(c("y_col", "id_col", "time_col", "t_col", "group", "x", "
 #' also provide a list of support points in the `grid.cat` parameter. When that is provided, this parameter is automatically set to TRUE. Default is FALSE.
 #' @param grid.cat List, containing the discrete support points for a discrete grid to be used with the mixture of distributions approach.
 #' This is useful for constructing synthetic distributions for categorical variables. Default is NULL, which uses a continuous grid based on the other parameters.
+#' @param perm_q_range Numeric vector of length 2, e.g. \code{c(0.5, 1)}. Only used when `permutation` is TRUE.
+#' If supplied, the permutation test statistic (the squared Wasserstein/CDF distance entering the pre/post ratio)
+#' is averaged only over the quantile sub-range \code{[perm_q_range[1], perm_q_range[2]]}, \emph{without} changing the
+#' synthetic-control fit (the weights are still estimated over the full distribution). This allows testing for
+#' significance in a specific region of the distribution, such as the upper tail. Default is NULL, which uses the
+#' full distribution.
+#' @param perm_seed Integer. Only used when `permutation` is TRUE. If supplied, each permutation iteration (placebo)
+#' is seeded deterministically as \code{set.seed(perm_seed + i)} for iteration \code{i}, so that the permutation
+#' p-value is reproducible and independent of `num.cores` (the parallel RNG stream otherwise depends on the fork
+#' layout). Default is NULL, which preserves the previous behaviour.
 #' @return A list containing the following elements:
 #' \itemize{
 #' \item \code{results.periods} A list containing, for each time period, the elements described in the return argument of \code{\link{DiSCo_iter}}, as well as the following additional elements:
@@ -98,7 +108,8 @@ utils::globalVariables(c("y_col", "id_col", "time_col", "t_col", "group", "x", "
 #' }
 DiSCo <- function(df, id_col.target, t0, M = 1000, G = 1000, num.cores = 1, permutation = FALSE, q_min = 0, q_max = 1,
                   CI = FALSE, boots = 500, replace=TRUE, uniform=FALSE, cl = 0.95, graph = FALSE,
-                  qmethod=NULL, qtype=7, seed=NULL, simplex=FALSE, mixture=FALSE, grid.cat=NULL) {
+                  qmethod=NULL, qtype=7, seed=NULL, simplex=FALSE, mixture=FALSE, grid.cat=NULL,
+                  perm_q_range=NULL, perm_seed=NULL) {
 
   #---------------------------------------------------------------------------
   ### process inputs
@@ -249,7 +260,8 @@ DiSCo <- function(df, id_col.target, t0, M = 1000, G = 1000, num.cores = 1, perm
     perm_obj <- DiSCo_per(results.periods=results.periods, evgrid=evgrid, T0=T0,
                           weights=weights, num.cores=num.cores,
                           graph=graph, qmethod=qmethod, qtype=qtype, M=M, q_min=q_min, q_max=q_max,
-                          mixture=mixture, simplex=simplex)
+                          mixture=mixture, simplex=simplex,
+                          perm_q_range=perm_q_range, perm_seed=perm_seed)
 
 
   } else {
