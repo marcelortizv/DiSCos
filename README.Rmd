@@ -26,7 +26,8 @@ cat(
   badger::badge_cran_download("DiSCos", "grand-total", "blue"),
   badger::badge_cran_download("DiSCos", "last-month", "blue"),
   badger::badge_cran_release("DiSCos", "blue"),
-  badger::badge_devel("Davidvandijcke/DiSCos", "blue"),
+  # dynamic badge (reads DESCRIPTION on main) -- badger::badge_devel goes stale between renders
+  "[![](https://img.shields.io/github/r-package/v/Davidvandijcke/DiSCos?label=devel%20version&color=blue)](https://github.com/Davidvandijcke/DiSCos)",
   # badger::badge_cran_checks("DiSCos"),
   badger::badge_last_commit("Davidvandijcke/DiSCos")
 )
