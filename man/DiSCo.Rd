@@ -25,7 +25,9 @@ DiSCo(
   seed = NULL,
   simplex = FALSE,
   mixture = FALSE,
-  grid.cat = NULL
+  grid.cat = NULL,
+  perm_q_range = NULL,
+  perm_seed = NULL
 )
 }
 \arguments{
@@ -89,6 +91,18 @@ also provide a list of support points in the \code{grid.cat} parameter. When tha
 
 \item{grid.cat}{List, containing the discrete support points for a discrete grid to be used with the mixture of distributions approach.
 This is useful for constructing synthetic distributions for categorical variables. Default is NULL, which uses a continuous grid based on the other parameters.}
+
+\item{perm_q_range}{Numeric vector of length 2, e.g. \code{c(0.5, 1)}. Only used when \code{permutation} is TRUE.
+If supplied, the permutation test statistic (the squared Wasserstein/CDF distance entering the pre/post ratio)
+is averaged only over the quantile sub-range \code{[perm_q_range[1], perm_q_range[2]]}, \emph{without} changing the
+synthetic-control fit (the weights are still estimated over the full distribution). This allows testing for
+significance in a specific region of the distribution, such as the upper tail. Default is NULL, which uses the
+full distribution.}
+
+\item{perm_seed}{Integer. Only used when \code{permutation} is TRUE. If supplied, each permutation iteration (placebo)
+is seeded deterministically as \code{set.seed(perm_seed + i)} for iteration \code{i}, so that the permutation
+p-value is reproducible and independent of \code{num.cores} (the parallel RNG stream otherwise depends on the fork
+layout). Default is NULL, which preserves the previous behaviour.}
 }
 \value{
 A list containing the following elements:

@@ -20,7 +20,9 @@ DiSCo_per_iter(
   q_min = 0,
   q_max = 1,
   simplex = FALSE,
-  mixture = FALSE
+  mixture = FALSE,
+  perm_q_range = NULL,
+  perm_seed = NULL
 )
 }
 \arguments{
@@ -55,6 +57,18 @@ Default is 1 (all quantiles). Currently NOT implemented for the \code{mixture} a
 See Section 4.3. in \insertCite{gunsilius2023distributional;textual}{DiSCos}. This approach minimizes the distance between the CDFs
 instead of the quantile functions, and is preferred for categorical variables. When working with such variables, one should
 also provide a list of support points in the \code{grid.cat} parameter. When that is provided, this parameter is automatically set to TRUE. Default is FALSE.}
+
+\item{perm_q_range}{Numeric vector of length 2, e.g. \code{c(0.5, 1)}. Only used when \code{permutation} is TRUE.
+If supplied, the permutation test statistic (the squared Wasserstein/CDF distance entering the pre/post ratio)
+is averaged only over the quantile sub-range \code{[perm_q_range[1], perm_q_range[2]]}, \emph{without} changing the
+synthetic-control fit (the weights are still estimated over the full distribution). This allows testing for
+significance in a specific region of the distribution, such as the upper tail. Default is NULL, which uses the
+full distribution.}
+
+\item{perm_seed}{Integer. Only used when \code{permutation} is TRUE. If supplied, each permutation iteration (placebo)
+is seeded deterministically as \code{set.seed(perm_seed + i)} for iteration \code{i}, so that the permutation
+p-value is reproducible and independent of \code{num.cores} (the parallel RNG stream otherwise depends on the fork
+layout). Default is NULL, which preserves the previous behaviour.}
 }
 \value{
 List of squared Wasserstein distances between the target unit and the control units
