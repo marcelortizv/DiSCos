@@ -1,4 +1,4 @@
-# DiSCos 0.1.4.9000 (development)
+# DiSCos 0.1.5
 
 * Added `perm_q_range` argument to `DiSCo()`: restrict the permutation test statistic to a quantile
   sub-range (e.g. the upper tail) without changing the synthetic-control fit, so one can test for an
